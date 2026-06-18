@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stand Up 2k26 — Content Schedule</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background-color:#0d0a05;background-image:radial-gradient(ellipse at 20% 10%,rgba(120,80,10,.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(80,40,0,.15) 0%,transparent 60%);min-height:100vh;font-family:'Inter',sans-serif;color:#e8d9b5;padding:0 0 80px}
+    header{text-align:center;padding:56px 24px 40px;border-bottom:1px solid rgba(180,130,40,.25);position:relative}
+    header::before{content:"☠";font-size:28px;position:absolute;left:32px;top:32px;opacity:.5}
+    header::after{content:"☠";font-size:28px;position:absolute;right:32px;top:32px;opacity:.5}
+    .skull-row{font-size:22px;letter-spacing:12px;opacity:.4;margin-bottom:12px}
+    h1{font-family:'Pirata One',cursive;font-size:clamp(48px,10vw,96px);color:#d4a017;letter-spacing:4px;line-height:1.05;text-shadow:0 0 40px rgba(212,160,23,.35),2px 2px 0 #5a3a00}
+    .subtitle{font-family:'Cinzel',serif;font-size:clamp(13px,2.5vw,16px);color:#a07830;letter-spacing:8px;text-transform:uppercase;margin-top:10px}
+    .divider{display:flex;align-items:center;gap:12px;margin:14px auto 0;max-width:320px;color:#6b4f1a}
+    .divider::before,.divider::after{content:"";flex:1;height:1px;background:linear-gradient(to right,transparent,#6b4f1a,transparent)}
+    .divider span{font-size:18px}
+    .live-clock{font-family:'Cinzel',serif;font-size:13px;color:#6b4f1a;letter-spacing:3px;margin-top:10px}
+
+    main{max-width:780px;margin:48px auto 0;padding:0 20px;display:flex;flex-direction:column;gap:28px}
+
+    /* ADD BUTTON */
+    .add-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border:1px dashed rgba(212,160,23,.4);border-radius:12px;background:rgba(212,160,23,.04);color:#c49010;font-family:'Cinzel',serif;font-size:14px;letter-spacing:2px;cursor:pointer;transition:all .2s}
+    .add-btn:hover{background:rgba(212,160,23,.09);border-color:rgba(212,160,23,.7)}
+
+    /* MODAL */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px}
+    .modal-bg.open{display:flex}
+    .modal{background:#120e04;border:1px solid rgba(212,160,23,.4);border-radius:16px;padding:32px;width:100%;max-width:460px}
+    .modal h2{font-family:'Cinzel',serif;color:#d4a017;font-size:18px;margin-bottom:24px;letter-spacing:2px}
+    .field{margin-bottom:18px}
+    .field label{display:block;font-size:12px;color:#8a6830;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;font-family:'Cinzel',serif}
+    .field input,.field select,.field textarea{width:100%;background:#0d0a05;border:1px solid rgba(180,130,40,.35);border-radius:8px;padding:10px 14px;color:#e8d9b5;font-family:'Inter',sans-serif;font-size:14px;outline:none}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(212,160,23,.7)}
+    .field select option{background:#0d0a05}
+    .modal-actions{display:flex;gap:12px;margin-top:24px}
+    .btn-cancel{flex:1;padding:11px;background:transparent;border:1px solid rgba(180,130,40,.3);border-radius:8px;color:#8a6830;font-family:'Cinzel',serif;font-size:13px;cursor:pointer}
+    .btn-cancel:hover{background:rgba(255,255,255,.03)}
+    .btn-save{flex:2;padding:11px;background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.5);border-radius:8px;color:#d4a017;font-family:'Cinzel',serif;font-size:13px;letter-spacing:1px;cursor:pointer}
+    .btn-save:hover{background:rgba(212,160,23,.25)}
+
+    /* DAY CARDS */
+    .day-card{border:1px solid rgba(180,130,40,.3);border-radius:12px;background:rgba(255,220,120,.04);overflow:hidden}
+    .day-card.today{border-color:rgba(212,160,23,.65);background:rgba(212,160,23,.06);box-shadow:0 0 28px rgba(212,160,23,.12)}
+    .day-card.past{opacity:.55}
+    .day-card.past .day-name{text-decoration:line-through;text-decoration-color:rgba(212,160,23,.5)}
+    .day-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid rgba(180,130,40,.2);background:rgba(255,200,60,.05)}
+    .day-card.today .day-header{background:rgba(212,160,23,.1)}
+    .day-label{display:flex;align-items:baseline;gap:10px;flex:1}
+    .day-name{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:#d4a017}
+    .day-date{font-size:13px;color:#8a6830;font-weight:400}
+    .today-badge{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:rgba(212,160,23,.18);border:1px solid rgba(212,160,23,.5);color:#d4a017;padding:3px 10px;border-radius:20px;white-space:nowrap}
+    .past-badge{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#4a3510;padding:3px 10px;border-radius:20px;border:1px solid rgba(180,130,40,.2)}
+
+    /* POSTS */
+    .posts{padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+    .post-item{display:flex;gap:16px;align-items:flex-start;position:relative}
+    .post-item.past-post .post-title{text-decoration:line-through;text-decoration-color:rgba(212,160,23,.4);color:#5a4520}
+    .post-item.past-post .time-badge{color:#4a3510}
+    .time-col{min-width:86px;display:flex;flex-direction:column;align-items:flex-end;padding-top:2px}
+    .time-badge{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:#c49010;white-space:nowrap}
+    .post-connector{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+    .post-dot{width:9px;height:9px;border-radius:50%;background:#d4a017;border:1px solid rgba(212,160,23,.5);flex-shrink:0}
+    .post-item.past-post .post-dot{background:#3a2a0a;border-color:#3a2a0a}
+    .post-line{width:1px;flex:1;background:rgba(180,130,40,.25);min-height:24px}
+    .post-item:last-child .post-line{display:none}
+    .post-content{flex:1;padding-bottom:6px}
+    .post-title{font-size:15px;font-weight:500;color:#e8d9b5;line-height:1.4}
+    .post-note{font-size:12px;color:#7a5c28;margin-top:3px}
+    .delete-btn{background:none;border:none;color:#3a2a0a;font-size:16px;cursor:pointer;padding:0 4px;line-height:1;transition:color .2s;align-self:center}
+    .delete-btn:hover{color:#c04020}
+
+    footer{text-align:center;margin-top:60px;font-family:'Cinzel',serif;font-size:12px;color:#3a2a0a;letter-spacing:3px;text-transform:uppercase}
+    footer span{font-size:16px;vertical-align:middle;margin:0 8px}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="skull-row">— ✦ — ✦ — ✦ —</div>
+  <h1>Stand Up 2k26</h1>
+  <p class="subtitle">Marketing Content Schedule</p>
+  <div class="divider"><span>⚓</span></div>
+  <p class="live-clock" id="clock"></p>
+</header>
+
+<main id="timeline"></main>
+
+<!-- ADD ENTRY MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>⚓ Add to the Timeline</h2>
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="inp-date"/>
+    </div>
+    <div class="field">
+      <label>Time</label>
+      <input type="time" id="inp-time"/>
+    </div>
+    <div class="field">
+      <label>Post Title</label>
+      <input type="text" id="inp-title" placeholder="e.g. Episode 3 drop"/>
+    </div>
+    <div class="field">
+      <label>Note / Type (optional)</label>
+      <input type="text" id="inp-note" placeholder="e.g. 🎬 Video post"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEntry()">Add to Schedule</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>☠</span> Stand Up 2k26 — Marketing Command <span>☠</span>
+</footer>
+
+<script>
+const STORAGE_KEY = 'standup2k26_entries';
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function loadEntries() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; }
+}
+function saveEntries(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+// Seed default entries once
+function seedDefaults() {
+  const existing = loadEntries();
+  if (existing.length > 0) return;
+  const base = new Date();
+  base.setHours(0,0,0,0);
+  function ds(offsetDays) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + offsetDays);
+    return d.toISOString().slice(0,10);
+  }
+  const defaults = [
+    { id: uid(), date: ds(0), time: '15:00', title: 'Quiz for the Delegates',                    note: '⚡ Interactive post' },
+    { id: uid(), date: ds(0), time: '21:00', title: 'Second Round of Registration',              note: '📋 Registration announcement' },
+    { id: uid(), date: ds(1), time: '',      title: 'Why Delegates Can\'t Make It — Problems & Solutions', note: '📢 Awareness post' },
+    { id: uid(), date: ds(2), time: '',      title: 'Episode 2',                                 note: '🎬 Video / Episode drop' },
+  ];
+  saveEntries(defaults);
+}
+
+function uid() { return Math.random().toString(36).slice(2,9); }
+
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+function fmt12(time24) {
+  if (!time24) return 'TBD';
+  const [h,m] = time24.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hh = h % 12 || 12;
+  return `${hh}:${m.toString().padStart(2,'0')} ${ampm}`;
+}
+
+function fmtDate(dateStr) {
+  const [y,mo,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, mo-1, d);
+  return `${DAYS[dt.getDay()]} · ${MONTHS[mo-1]} ${d}, ${y}`;
+}
+
+function dayLabel(dateStr) {
+  const [y,mo,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, mo-1, d);
+  return DAYS[dt.getDay()];
+}
+
+function dateLabel(dateStr) {
+  const [y,mo,d] = dateStr.split('-').map(Number);
+  return `${MONTHS[mo-1]} ${d}, ${y}`;
+}
+
+function render() {
+  const entries = loadEntries();
+  const today = todayStr();
+  const now = new Date();
+
+  // Group by date
+  const groups = {};
+  entries.forEach(e => {
+    if (!groups[e.date]) groups[e.date] = [];
+    groups[e.date].push(e);
+  });
+
+  // Sort dates
+  const dates = Object.keys(groups).sort();
+
+  const main = document.getElementById('timeline');
+  main.innerHTML = '';
+
+  dates.forEach(dateStr => {
+    const isPast = dateStr < today;
+    const isToday = dateStr === today;
+
+    const card = document.createElement('div');
+    card.className = 'day-card' + (isToday ? ' today' : isPast ? ' past' : '');
+
+    // Sort posts by time
+    const posts = groups[dateStr].sort((a,b) => (a.time||'99:99').localeCompare(b.time||'99:99'));
+
+    let badge = '';
+    if (isToday) badge = '<span class="today-badge">⚑ Today</span>';
+    else if (isPast) badge = '<span class="past-badge">✓ Done</span>';
+
+    card.innerHTML = `
+      <div class="day-header">
+        <div class="day-label">
+          <span class="day-name">${dayLabel(dateStr)}</span>
+          <span class="day-date">${dateLabel(dateStr)}</span>
+        </div>
+        ${badge}
+      </div>
+      <div class="posts" id="posts-${dateStr}"></div>
+    `;
+
+    const postsEl = card.querySelector(`#posts-${dateStr}`);
+
+    posts.forEach((entry, i) => {
+      // Is this specific post in the past?
+      let postPast = isPast;
+      if (isToday && entry.time) {
+        const [h,m] = entry.time.split(':').map(Number);
+        const postTime = new Date();
+        postTime.setHours(h, m, 0, 0);
+        postPast = now > postTime;
+      }
+
+      const item = document.createElement('div');
+      item.className = 'post-item' + (postPast ? ' past-post' : '');
+      item.innerHTML = `
+        <div class="time-col">
+          <span class="time-badge">${fmt12(entry.time)}</span>
+        </div>
+        <div class="post-connector">
+          <div class="post-dot"></div>
+          <div class="post-line"></div>
+        </div>
+        <div class="post-content">
+          <p class="post-title">${entry.title}</p>
+          ${entry.note ? `<p class="post-note">${entry.note}</p>` : ''}
+        </div>
+        <button class="delete-btn" title="Remove" onclick="removeEntry('${entry.id}')">✕</button>
+      `;
+      postsEl.appendChild(item);
+    });
+
+    main.appendChild(card);
+  });
+
+  // Add button at bottom
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-btn';
+  addBtn.innerHTML = '⚓ &nbsp; ADD NEW POST TO TIMELINE';
+  addBtn.onclick = openModal;
+  main.appendChild(addBtn);
+}
+
+function removeEntry(id) {
+  const entries = loadEntries().filter(e => e.id !== id);
+  saveEntries(entries);
+  render();
+}
+
+function openModal() {
+  document.getElementById('modalBg').classList.add('open');
+  // Default date to today
+  document.getElementById('inp-date').value = todayStr();
+  document.getElementById('inp-time').value = '';
+  document.getElementById('inp-title').value = '';
+  document.getElementById('inp-note').value = '';
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+
+function saveEntry() {
+  const date = document.getElementById('inp-date').value;
+  const time = document.getElementById('inp-time').value;
+  const title = document.getElementById('inp-title').value.trim();
+  const note = document.getElementById('inp-note').value.trim();
+
+  if (!date || !title) {
+    alert('Please fill in at least the date and post title.');
+    return;
+  }
+
+  const entries = loadEntries();
+  entries.push({ id: uid(), date, time, title, note });
+  saveEntries(entries);
+  closeModal();
+  render();
+}
+
+// Close modal on bg click
+document.getElementById('modalBg').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Live clock
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes().toString().padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hh = h % 12 || 12;
+  const day = DAYS[now.getDay()];
+  const mo = MONTHS[now.getMonth()];
+  document.getElementById('clock').textContent =
+    `${day}, ${mo} ${now.getDate()}, ${now.getFullYear()}  ·  ${hh}:${m} ${ampm}`;
+}
+
+seedDefaults();
+render();
+updateClock();
+setInterval(() => { updateClock(); render(); }, 60000);
+</script>
+</body>
+</html>
